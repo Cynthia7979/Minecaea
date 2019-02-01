@@ -12,4 +12,4 @@ Minecaea是Arceaea的MC版，基于Python和MC（废话）。
 ## Arcaea介绍
 Arcaea是lowiro开发的一款3D音乐游戏，中文维基[在这里](http://wiki.arcaea.cn/index.php/首页)。
 
-根据lowiro的声明，请勿传播铺面文件。
+根据lowiro的声明，请勿传播谱面文件。
