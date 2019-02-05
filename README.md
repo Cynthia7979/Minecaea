@@ -8,7 +8,7 @@ Minecaea是Arceaea的MC版，基于Python和MC（废话）。
 
 Minecaea is a Minecraft version of Arcaea based on Python and Minecrft.
 
-Please notice that this repo is only an illustration of musical chart (notes) and cannot be actually played.
+Please notice that this repo is only an illustration of chart (notes) and cannot be actually played.
 
 ## 项目 Repository
 本repo会主要在1月10日到1月17日之间活跃。如果项目没有完成，那就没有完成吧（bushi
@@ -37,3 +37,5 @@ Arcaea是lowiro开发的一款3D音乐游戏，中文维基[在这里](http://wi
 根据lowiro的声明，请勿传播谱面文件。
 
 Arcaea is a 3D music game developed by lowiro. Their official website is [here](https://arcaea.lowiro.com/en).
+
+According to lowiro, no chart file should be spreaded.
