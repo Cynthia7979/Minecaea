@@ -17,25 +17,41 @@ lane: int
     leftmost = 1
     rightmost = 4
 
-slidemethod: list of int
-    * Not very clear what this meant
-    0 = both (b, sine in + out)
-    1 = straight (s)
-    2 = sine in (si)
-    3 = sine out (so)
-    * [] for skytap
-
 color: int
     0 = blue
     1 = red
+
+notes: tuple of int, represeting time in ms
+
+x_init, y_init: int
+    * bottomleft and upperleft of the actual playing area in the map, z = 0 (on ground)
 """
+
 
 class Note(object):
     def __init__(self):
         self.start_time, self.end_time,\
-        self.start_lane, self.end_lane, \
-        self.start_height, self.end_height = (None,) * 6
-        self.block = None
+            self.start_lane, self.end_lane, \
+            self.start_height, self.end_height = (None,) * 6
+        self.block = airBlock
+
+    def place_block(self, x_init, y_init, t):
+        pass  # TODO: Not very sure what to do because of time
+
+    def check_class(self, other):  # Syntactic sugar
+        assert isinstance(other, Note), "{} is not an instance of Note".format(other)
+
+    def __gt__(self, other):
+        self.check_class(other)
+        return self.start_time > other.start_time
+
+    def __ge__(self, other):
+        self.check_class(other)
+        return self.start_time >= other.start_time
+
+    def __eq__(self, other):
+        self.check_class(other)
+        return self.start_time == other.start_time
 
 
 class FloorNote(Note):
@@ -68,8 +84,14 @@ class SkyNote(Note):
 
 
 class Arc(SkyNote):
-    def __init__(self, t1, t2, x1, x2, slidemethod, y1, y2, color):
+    def __init__(self, t1, t2, x1, x2, y1, y2, color):
         super().__init__(t1, t2, x1, x2, y1, y2)
-        self.slidemethod = slidemethod
         self.color = color
-        self.block = bloc
+        self.block = (magentaGlassBlock, lightBlueGlassBlock)
+
+
+class SkyLine(SkyNote):
+    def __init__(self, t1, t2, x1, x2, y1, y2, notes):
+        super().__init__(t1, t2, x1, x2, y1, y2)
+        self.notes = notes
+
