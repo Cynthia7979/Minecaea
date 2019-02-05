@@ -37,7 +37,7 @@ class Article(object):  # For "Îï¼þ", renamed "article" because of collision wit
         self.start_time = None
 
     def check_class(self, other):  # Syntactic sugar
-        assert isinstance(self, other), "{} is not an instance of Note".format(other)
+        assert isinstance(other, Article), "{} is not an instance of Article".format(other)
 
     def __gt__(self, other):
         self.check_class(other)
@@ -67,8 +67,8 @@ class Note(Article):
         pass  # TODO: Not very sure what to do
 
     def __str__(self):
-        return "{name} at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})".format(
-            name=self.__class__,
+        return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})".format(
+            name=self.__class__.__name__,
             start_time=self.start_time, end_time=self.end_time,
             start_x=self.start_lane, end_x=self.end_lane,
             start_y=self.start_height, end_y=self.end_height)
@@ -104,21 +104,21 @@ class SkyNote(Note):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod):
         super().__init__()
         self.start_time, self.end_time = int(t1), int(t2)
-        self.start_lane, self.end_lane = (int((x1+0.5)*100)), (int((x2+0.5)*100))
-        self.start_height, self.end_height = (int(y1*100)), (int(y2*100))
+        self.start_lane, self.end_lane = (int((float(x1)+0.5)*100)), (int((float(x2)+0.5)*100))
+        self.start_height, self.end_height = (int(float(y1)*100)), (int(float(y2)*100))
         self.slidemethod = slidemethod
 
 
 class Arc(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
-        self.color = color
+        self.color = int(color)
         self.block = ('magentaGlassBlock', 'lightBlueGlassBlock')
 
     def __str__(self):
-        return "{name} at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
+        return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
                " slidemethod={slidemethod} and color={color}".format(
-            name=self.__class__,
+            name=self.__class__.__name__,
             start_time=self.start_time, end_time=self.end_time,
             start_x=self.start_lane, end_x=self.end_lane,
             start_y=self.start_height, end_y=self.end_height,
@@ -132,9 +132,9 @@ class SkyLine(SkyNote):
         self.notes = notes
 
     def __str__(self):
-        return "{name} at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
-               " slidemethod={slidemethod}. Notes are:\n{notes}".format(
-            name=self.__class__,
+        return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
+               " slidemethod={slidemethod}. Notes are: {notes}".format(
+            name=self.__class__.__name__,
             start_time=self.start_time, end_time=self.end_time,
             start_x=self.start_lane, end_x=self.end_lane,
             start_y=self.start_height, end_y=self.end_height,
@@ -147,9 +147,9 @@ class Timing(Article):
 
     def __init__(self, time, bpm, beat):
         super().__init__()
-        self.start_time = time
-        self.bpm = bpm
-        self.beat = beat
+        self.start_time = int(time)
+        self.bpm = float(bpm)
+        self.beat = float(beat)
 
     def __str__(self):
         return "Timing instance at {time}ms with bpm {bpm} and beat {beat}".format(time=self.start_time,
