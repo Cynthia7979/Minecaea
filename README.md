@@ -1,12 +1,12 @@
 # 肝起来！
-### Minecaea - MC版Arceaea
+### Minecaea - MC版Arcaea
 
 ## 介绍 Introduction
-Minecaea是Arceaea的MC版，基于Python和MC（废话）。
+Minecaea是Arcaea的MC版，基于Python和MC（废话）。
 
 本项目仅作Arcaea谱面的演示，并不能游玩，请注意。
 
-Minecaea is a Minecraft version of Arcaea based on Python and Minecrft.
+Minecaea is a Minecraft version of Arcaea based on Python and Minecraft.
 
 Please notice that this repo is only an illustration of chart (notes) and cannot be actually played.
 
