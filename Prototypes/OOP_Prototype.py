@@ -163,10 +163,14 @@ class Chart(object):
         self._notes = []
 
     def add_note(self, note):
-        self._notes.append(note)
+        if isinstance(note, Article):  # If it isn't a blank line, comment or something
+            self._notes.append(note)
 
     def get_chart(self):
         self._notes.sort()
         return tuple(self._notes)
+
+    def __str__(self):
+        return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
 
 

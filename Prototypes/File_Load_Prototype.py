@@ -2,6 +2,8 @@ from OOP_Prototype import *
 
 
 def create_article(string):
+    if string in ("", " ", "\n") or string.startswith("#"):
+        return None
     keyword = cut_string(string, "(", before=True)
     all_attributes = cut_string(cut_string(string, "(", after=True), ")", before=True)
     attributes = all_attributes.split(",")
@@ -29,7 +31,7 @@ def create_article(string):
 def cut_string(string, cut_at, after=False, before=False):
     index = string.find(cut_at)
     if index == -1:
-        return ''
+        return ""
     if after:
         return string[index+1:]
     elif before:
@@ -50,10 +52,9 @@ def main(filepath):
 
     for line in lines:
         chart.add_note(create_article(line))
-
-    for note in chart.get_chart():
-        print(note)
+    print()
+    print(chart)
 
 
 if __name__ == '__main__':
-    main("2.aff")
+    main("test.aff")
