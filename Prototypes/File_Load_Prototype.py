@@ -57,4 +57,4 @@ def main(filepath):
 
 
 if __name__ == '__main__':
-    main("2.aff")
+    main("test.aff")
