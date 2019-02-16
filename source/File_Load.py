@@ -54,7 +54,7 @@ def main(filepath):
         chart.add_note(create_article(line))
     print()
     print(chart)
-
+    return chart
 
 if __name__ == '__main__':
     main("test.aff")
