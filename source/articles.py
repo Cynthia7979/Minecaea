@@ -63,7 +63,7 @@ class Note(Article):
             self.start_height, self.end_height = (None,) * 6
         self.block = 'airBlock'
 
-    def place_block(self, x_init, y_init, t):
+    def place_block(self, x_scale, y_scale, z_scale):
         pass  # TODO: Not very sure what to do
 
     def __str__(self):
@@ -87,7 +87,15 @@ class FloorTap(FloorNote):
 
     def __init__(self, t, lane):
         super().__init__(t, t, lane)
-        self.block = 'blockForFloorTap'
+        self.block = (1,none)
+        self.visual_length = 2 #unit in blocks
+
+    def place_block(self, lane_width, y_scale, z_scale):
+        block_list=[]
+        for i in range(self.visual_length):
+            for n in range(lane_width):
+                bolck_list.append([self.lane*(lane_width+1)-n,-1,i].append(self.block))
+        return block_list
 
 
 class FloorHold(FloorNote):
@@ -96,6 +104,12 @@ class FloorHold(FloorNote):
     def __init__(self, t1, t2, lane):
         super().__init__(t1, t2, lane)
         self.block = 'blockForFloorHold'
+
+    def place_block(self, lane_width, y_scale, z_scale): #pls pass chart.z_scale*bpm as z_scale
+        for i in range(z_scale*(self.end_time-self.start_time)):
+            for n in range(lane_width):
+                bolck_list.append([self.lane*(lane_width+1)-n,-1,i].append(self.block))
+        return block_list
 
 
 class SkyNote(Note):
