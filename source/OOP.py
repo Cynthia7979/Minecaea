@@ -161,14 +161,35 @@ class Chart(object):
     def __init__(self):
         self.offset = None
         self._notes = []
+        self._lanewidth = 25
+        self._whr = 2 #width-height ratio
+        self._timings = []
+        self.z_scale = 1
 
     def add_note(self, note):
-        if isinstance(note, Article):  # If it isn't a blank line, comment or something
+        if isinstance(note, Note):  # If it isn't a blank line, comment or something
             self._notes.append(note)
+        elif isinstance(note,Timing):
+            self._timings.append(note)
 
     def get_chart(self):
         self._notes.sort()
         return tuple(self._notes)
+
+    def get_timings(self):
+        self._timings.sort()
+        return tuple(self._timings)
+
+    def t2z(self,t):
+        z = 0
+        for i in range(len(self._timings)):
+            if self._timings[-i-1].start_time < t:
+                z = z + self._timings[-i-1].bpm * ( t - self._timings[-i-1].start_time )
+                for n in range(len(self._timings)-i-1):
+                    z = z + self._timings[n].bpm * ( self._timings[n+1].start_time - self._timings[n].start_time )
+                break
+        z = z * self.z_scale
+        return z
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
