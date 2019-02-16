@@ -91,10 +91,10 @@ class FloorTap(FloorNote):
         self.visual_length = 2 #unit in blocks
 
     def place_block(self, lane_width, y_scale, z_scale):
-        block_list=[]
+        block_list = []
         for i in range(self.visual_length):
             for n in range(lane_width):
-                bolck_list.append([self.lane*(lane_width+1)-n,-1,i].append(self.block))
+                bolck_list.append([self.lane*(lane_width+1)-n, -1, i].append(self.block))
         return block_list
 
 
@@ -106,9 +106,9 @@ class FloorHold(FloorNote):
         self.block = 'blockForFloorHold'
 
     def place_block(self, lane_width, y_scale, z_scale): #pls pass chart.z_scale*bpm as z_scale
-        for i in range(z_scale*(self.end_time-self.start_time)):
+        for i in range(z_scale * (self.end_time - self.start_time)):
             for n in range(lane_width):
-                bolck_list.append([self.lane*(lane_width+1)-n,-1,i].append(self.block))
+                bolck_list.append([self.lane*(lane_width+1)-n, -1, i].append(self.block))
         return block_list
 
 
@@ -196,14 +196,16 @@ class Chart(object):
 
     def t2z(self,t):
         z = 0
+        bpm = 0
         for i in range(len(self._timings)):
             if self._timings[-i-1].start_time < t:
                 z = z + self._timings[-i-1].bpm * ( t - self._timings[-i-1].start_time )
+                bpm = self._timings[-i-1].bpm
                 for n in range(len(self._timings)-i-1):
                     z = z + self._timings[n].bpm * ( self._timings[n+1].start_time - self._timings[n].start_time )
                 break
         z *= self.z_scale
-        return z
+        return z, bpm
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
