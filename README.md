@@ -6,9 +6,13 @@ Minecaea是Arcaea的MC版，基于Python和MC（废话）。
 
 本项目仅作Arcaea谱面的演示，并不能游玩，请注意。
 
+代码实现基于RaspberryJuice（[mcpi](https://minecraft.gamepedia.com/Pi_Edition)）和Python 3.6。
+
 Minecaea is a Minecraft version of Arcaea based on Python and Minecraft.
 
 Please notice that this repo is only an illustration of chart (notes) and cannot be actually played.
+
+The code is based on RaspberryJuice ([mcpi](https://minecraft.gamepedia.com/Pi_Edition)) and Python 3.6
 
 ## 项目 Repository
 本repo会主要在1月10日到1月17日之间活跃。如果项目没有完成，那就没有完成吧（bushi

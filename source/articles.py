@@ -162,7 +162,7 @@ class Chart(object):
         self.offset = None
         self._notes = []
         self._lanewidth = 25
-        self._whr = 2 #width-height ratio
+        self._whr = 2  # width-height ratio
         self._timings = []
         self.z_scale = 1
 
@@ -188,7 +188,7 @@ class Chart(object):
                 for n in range(len(self._timings)-i-1):
                     z = z + self._timings[n].bpm * ( self._timings[n+1].start_time - self._timings[n].start_time )
                 break
-        z = z * self.z_scale
+        z *= self.z_scale
         return z
 
     def __str__(self):

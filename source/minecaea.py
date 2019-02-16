@@ -1,14 +1,15 @@
-from File_Load import *
-from OOP import *
+from file_load import *
+from articles import *
 import sys
-sys.path.insert(0,'C:/Users/Administrator/Desktop/Experimental Server/Minecaea/libs')
 from mcpi import minecraft
+
+sys.path.insert(0,'C:/Users/Administrator/Desktop/Experimental Server/Minecaea/libs')
 
 lane_width = 24
 whr = 2
 
-chart = main('test.aff')
-notes = chart.get_chart()
+#chart = main('test.aff')
+#notes = chart.get_chart()
 
 
 
