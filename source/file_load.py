@@ -40,7 +40,7 @@ def cut_string(string, cut_at, after=False, before=False):
         return string
 
 
-def main(filepath):
+def load(filepath):
     f = open(filepath)
     raw = f.read()
     lines = raw.split("\n")
@@ -52,9 +52,7 @@ def main(filepath):
 
     for line in lines:
         chart.add_note(create_article(line))
-    print()
-    print(chart)
     return chart
 
 if __name__ == '__main__':
-    main("test.aff")
+    load("test.aff")

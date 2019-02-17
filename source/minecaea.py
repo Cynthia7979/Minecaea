@@ -1,15 +1,15 @@
-from file_load import *
-from articles import *
-from mcpi import minecraft
+import file_load
+import articles
+import mcpi.minecraft as minecraft
 
-#almost constant variables
+# almost constant variables
 lane_width = 24
 whr = 2
 
-#chart = main('test.aff')
-#notes = chart.get_chart()
+chart = file_load.load('test.aff')
+notes = chart.get_notes()
 
-#get original point
-mc=minecraft.Minecraft.create()
-pos=mc.player.getTilePos()
+# get original point
+mc = minecraft.Minecraft.create()
+pos = mc.player.getTilePos()
 x0, y0, z0 = pos.x, pos.y, pos.z

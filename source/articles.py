@@ -1,18 +1,20 @@
 # -*- coding: gb2312 -*-
 
+import mcpi.block as block
+
 """
 Minecaea - Minecraft version of Arcaea
-class structure prototype
+class structure
 ============================
 
 x-axis: int
-    leftmost = 0
-    rightmost = 200
-    center = 100
+    leftmost = -50
+    rightmost = 150
+    center = 50
 
 y-axis: int
     uppermost = 100 (sky tap line)
-    bottommost = 0 (floor)
+    bottommost = -1 (floor)
     center = 50
 
 lane: int
@@ -25,8 +27,12 @@ color: int
 
 notes: tuple of int, represeting time in ms
 
-x_init, y_init: int
-    * bottomleft and upperleft of the actual playing area in the map, z = 0 (on ground)
+block: tuple (block, data)
+    block: block instance from mcpi.block
+    data: int, representing block's kind (s.a. saplings, wools, stained glass, etc.)
+
+x y t AND x y z coordinates: Arcaea and Minecraft coordinates
+
 """
 
 
@@ -61,9 +67,9 @@ class Note(Article):
         self.start_time, self.end_time,\
             self.start_lane, self.end_lane, \
             self.start_height, self.end_height = (None,) * 6
-        self.block = 'airBlock'
+        self.block = (block.AIR, None)
 
-    def place_block(self, x_scale, y_scale, z_scale):
+    def get_blocks(self, x_scale, y_scale, z_scale):
         pass  # TODO: Not very sure what to do
 
     def __str__(self):
@@ -87,14 +93,15 @@ class FloorTap(FloorNote):
 
     def __init__(self, t, lane):
         super().__init__(t, t, lane)
-        self.block = (1,none)
-        self.visual_length = 2 #unit in blocks
+        self.block = block.STONE
+        self.visual_length = 2  # visual width in blocks
 
-    def place_block(self, lane_width, y_scale, z_scale):
+    def get_blocks(self, lane_width, y_scale, z_scale):
         block_list = []
         for i in range(self.visual_length):
             for n in range(lane_width):
-                bolck_list.append([self.lane*(lane_width+1)-n, -1, i].append(self.block))
+                #                  |---------------x--------------|   y  z            block
+                block_list.append([self.start_lane*(lane_width+1)-n, -1, i].append(self.block))
         return block_list
 
 
@@ -105,10 +112,12 @@ class FloorHold(FloorNote):
         super().__init__(t1, t2, lane)
         self.block = 'blockForFloorHold'
 
-    def place_block(self, lane_width, y_scale, z_scale): #pls pass chart.z_scale*bpm as z_scale
+    def get_blocks(self, lane_width, y_scale, z_scale):  # pls pass chart.z_scale*bpm as z_scale
+        block_list = []
         for i in range(z_scale * (self.end_time - self.start_time)):
             for n in range(lane_width):
-                bolck_list.append([self.lane*(lane_width+1)-n, -1, i].append(self.block))
+                #                  |---------------x--------------|   y  z            block
+                block_list.append([self.start_lane*(lane_width+1)-n, -1, i].append(self.block))
         return block_list
 
 
@@ -178,15 +187,16 @@ class Chart(object):
         self._lanewidth = 25
         self._whr = 2  # width-height ratio
         self._timings = []
+        self._chart = []
         self.z_scale = 1
 
     def add_note(self, note):
         if isinstance(note, Note):  # If it isn't a blank line, comment or something
             self._notes.append(note)
-        elif isinstance(note,Timing):
+        elif isinstance(note, Timing):
             self._timings.append(note)
 
-    def get_chart(self):
+    def get_notes(self):
         self._notes.sort()
         return tuple(self._notes)
 
@@ -194,18 +204,33 @@ class Chart(object):
         self._timings.sort()
         return tuple(self._timings)
 
-    def t2z(self,t):
+    def get_chart(self):
+        self._chart = self._notes + self._timings
+        self._chart.sort()
+        return tuple(self._chart)
+
+    def t2z(self, t):  # Transfer the Arcaea "x y t" unit to Minecraft "x y z" unit (static unit)
         z = 0
         bpm = 0
         for i in range(len(self._timings)):
-            if self._timings[-i-1].start_time < t:
-                z = z + self._timings[-i-1].bpm * ( t - self._timings[-i-1].start_time )
-                bpm = self._timings[-i-1].bpm
-                for n in range(len(self._timings)-i-1):
-                    z = z + self._timings[n].bpm * ( self._timings[n+1].start_time - self._timings[n].start_time )
+            current_timing = self._timings[-i-1]  # Going through self._timings backward
+            if current_timing.start_time < t:  # If this timing is before the note (t)
+                z += current_timing.bpm * (t - current_timing.start_time)  # Distance between the note and the timing
+                bpm = current_timing.bpm
+                for n in range(len(self._timings)-i-1):  # For every timing before this one
+                    z += self._timings[n].bpm * (self._timings[n+1].start_time - self._timings[n].start_time)
+                    # Add the complete distance before the note
                 break
-        z *= self.z_scale
+        z *= self.z_scale  # Calculate the distance in blocks
         return z, bpm
+
+    def build(self):
+        # Prototype
+        all_blocks = []
+        for note in self._notes:
+            for block in note.get_blocks():
+                x, y, z, (block, data) = block
+                all_blocks.append({'x': x, 'y': y, 'z': z, 'block': block, 'data': data})
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
