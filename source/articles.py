@@ -1,6 +1,7 @@
 # -*- coding: gb2312 -*-
 
 import mcpi.block as block
+import numpy as np
 
 """
 Minecaea - Minecraft version of Arcaea
@@ -131,6 +132,20 @@ class SkyNote(Note):
         self.start_height, self.end_height = (int(float(y1)*100)), (int(float(y2)*100))
         self.slidemethod = slidemethod
 
+    def get_curve(self, lane_width, y_scale, z_scale): # return coords of the centre of the curve, z_scale is bpm*z_scale
+        block_list=[]
+        step = 1 / curve_len
+        t = 0
+        x0, y0, z0, x1, y1, z1 = self.x1*lane_width*2, self.y1*y_scale, 0, self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
+        dx = x1 - x0
+        dy = y1 - y0
+        dz = z1
+        if self.slidemethod == 's':
+            while(t<= 1):
+                block = (x0+t*dx,y0+t*dy,z0+t+dz)
+                block_list.append(block)
+            return block_list
+
 
 class Arc(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
@@ -189,7 +204,8 @@ class Chart(object):
         self._timings = []
         self._chart = []
         self.z_scale = 1
-
+        self.all_blocks = []
+        
     def add_note(self, note):
         if isinstance(note, Note):  # If it isn't a blank line, comment or something
             self._notes.append(note)
@@ -226,11 +242,10 @@ class Chart(object):
 
     def build(self):
         # Prototype
-        all_blocks = []
         for note in self._notes:
             for block in note.get_blocks():
                 x, y, z, (block, data) = block
-                all_blocks.append({'x': x, 'y': y, 'z': z, 'block': block, 'data': data})
+                self.all_blocks.append({'x': x, 'y': y, 'z': z, 'block': block, 'data': data})
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
