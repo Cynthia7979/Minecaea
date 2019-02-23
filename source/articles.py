@@ -159,18 +159,31 @@ class SkyNote(Note):
                 block = (x,y,z)
                 block_list.append(block)
 
-        elif self.slidemethod == 'si':
-            pass
-        elif self.slidemethod == 'so':
-            pass
-        elif self.slidemethod == 'sisi':
-            pass
-        elif self.slidemethod == 'siso':
-            pass
-        elif self.slidemethod == 'soso':
-            pass
-        elif self.slidemethod == 'sosi':
-            pass
+        else:     # Prototype
+            z_list=[]
+            for i in range(dx):
+                z_list.append(i/dx)
+            sld = self.slidemethod
+            try:
+                if sld[3]== 'i':
+                    for i in z_list:
+                        y_list.append(np.sin(i*np.pi/2))
+                else:
+                    for i in z_list:
+                        y_list.append(-np.cos(i*np.pi/2)+1)
+
+            except: # exception oriented programming
+                y_list = z_list
+
+            if sld[1] == 'i':
+                for i in z_list:
+                        x_list.append(np.sin(i*np.pi/2))
+            else:
+                for i in z_list:
+                        x_list.append(-np.cos(i*np.pi/2)+1)
+
+            for i in range(dx):
+                block_list.append((x0+dx*x_list[i],y0+dy*y_list[i],i))
         return block_list        
 
 
