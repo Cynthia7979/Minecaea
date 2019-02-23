@@ -41,33 +41,33 @@ class Article(object):  # For "Îï¼þ", renamed "article" because of collision wit
     keyword = None
 
     def __init__(self):
-        self.start_time = None
+        self.t1 = None
 
     def check_class(self, other):  # Syntactic sugar
         assert isinstance(other, Article), "{} is not an instance of Article".format(other)
 
     def __gt__(self, other):
         self.check_class(other)
-        return self.start_time > other.start_time
+        return self.t1 > other.start_time
 
     def __ge__(self, other):
         self.check_class(other)
-        return self.start_time >= other.start_time
+        return self.t1 >= other.start_time
 
     def __eq__(self, other):
         self.check_class(other)
-        return self.start_time == other.start_time
+        return self.t1 == other.start_time
 
     def __str__(self):
-        return "Article instance at {time}ms.".format(time=self.start_time)
+        return "Article instance at {time}ms.".format(time=self.t1)
 
 
 class Note(Article):
     def __init__(self):
         super().__init__()
-        self.start_time, self.end_time,\
-            self.start_lane, self.end_lane, \
-            self.start_height, self.end_height = (None,) * 6
+        self.t1, self.t2, \
+        self.x1, self.x2, \
+        self.y1, self.y2 = (None,) * 6
         self.block = (block.AIR, None)
 
     def get_blocks(self, x_scale, y_scale, z_scale):
@@ -76,9 +76,9 @@ class Note(Article):
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})".format(
             name=self.__class__.__name__,
-            start_time=self.start_time, end_time=self.end_time,
-            start_x=self.start_lane, end_x=self.end_lane,
-            start_y=self.start_height, end_y=self.end_height)
+            start_time=self.t1, end_time=self.t2,
+            start_x=self.x1, end_x=self.x2,
+            start_y=self.y1, end_y=self.y2)
 
 
 class FloorNote(Note):
@@ -127,13 +127,14 @@ class SkyNote(Note):
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod):
         super().__init__()
-        self.start_time, self.end_time = int(t1), int(t2)
-        self.start_lane, self.end_lane = (int((float(x1)+0.5)*100)), (int((float(x2)+0.5)*100))
-        self.start_height, self.end_height = (int(float(y1)*100)), (int(float(y2)*100))
+        self.t1, self.t2 = int(t1), int(t2)
+        self.x1, self.x2 = (int((float(x1) + 0.5) * 100)), (int((float(x2) + 0.5) * 100))
+        self.y1, self.y2 = (int(float(y1) * 100)), (int(float(y2) * 100))
         self.slidemethod = slidemethod
 
-    def get_curve(self, lane_width, y_scale, z_scale): # return coords of the centre of the curve, z_scale is bpm*z_scale
-        block_list=[]
+    def get_curve(self, lane_width, y_scale, z_scale):
+        # return coordinates of the centre of the curve, z_scale is bpm*z_scale (the actual block z scale)
+        block_list = []
         step = 1 / curve_len
         t = 0
         x0, y0, z0, x1, y1, z1 = self.x1*lane_width*2, self.y1*y_scale, 0, self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
@@ -141,8 +142,8 @@ class SkyNote(Note):
         dy = y1 - y0
         dz = z1
         if self.slidemethod == 's':
-            while(t<= 1):
-                block = (x0+t*dx,y0+t*dy,z0+t+dz)
+            while t <= 1:
+                block = (x0+t*dx, y0+t*dy, z0+t+dz)
                 block_list.append(block)
             return block_list
 
@@ -157,9 +158,9 @@ class Arc(SkyNote):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
                " slidemethod={slidemethod} and color={color}".format(
             name=self.__class__.__name__,
-            start_time=self.start_time, end_time=self.end_time,
-            start_x=self.start_lane, end_x=self.end_lane,
-            start_y=self.start_height, end_y=self.end_height,
+            start_time=self.t1, end_time=self.t2,
+            start_x=self.x1, end_x=self.x2,
+            start_y=self.y1, end_y=self.y2,
             slidemethod=self.slidemethod, color=self.color
         )
 
@@ -173,9 +174,9 @@ class SkyLine(SkyNote):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
                " slidemethod={slidemethod}. Notes are: {notes}".format(
             name=self.__class__.__name__,
-            start_time=self.start_time, end_time=self.end_time,
-            start_x=self.start_lane, end_x=self.end_lane,
-            start_y=self.start_height, end_y=self.end_height,
+            start_time=self.t1, end_time=self.t2,
+            start_x=self.x1, end_x=self.x2,
+            start_y=self.y1, end_y=self.y2,
             slidemethod=self.slidemethod, notes=self.notes
         )
 
