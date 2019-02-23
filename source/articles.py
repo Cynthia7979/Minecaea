@@ -133,18 +133,42 @@ class SkyNote(Note):
         self.slidemethod = slidemethod
 
     def get_curve(self, lane_width, y_scale, z_scale): # return coords of the centre of the curve, z_scale is bpm*z_scale
-        block_list=[]
-        step = 1 / curve_len
+        block_list=[]        
         t = 0
         x0, y0, z0, x1, y1, z1 = self.x1*lane_width*2, self.y1*y_scale, 0, self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
         dx = x1 - x0
         dy = y1 - y0
-        dz = z1
+        dz = int(z1)
+        step = 1 / (dx + dy + dx)
+        
         if self.slidemethod == 's':
             while(t<= 1):
                 block = (x0+t*dx,y0+t*dy,z0+t+dz)
                 block_list.append(block)
-            return block_list
+                t += step
+        
+        elif self.slidemethod == 'b':
+            for i in range(dz+1):
+                l = i / dz
+                x = x0 + dx * -2 * l * l * (l - 1.5 )
+                y = y0 + dy * -2 * l * l * (l - 1.5 )
+                block = (x,y,z)
+                block_list.append(block)
+
+
+        elif self.slidemethod == 'si':
+            return
+        elif self.slidemethod == 'so':
+            return
+        elif self.slidemethod == 'sisi':
+            return
+        elif self.slidemethod == 'siso':
+            return
+        elif self.slidemethod == 'soso':
+            return
+        elif self.slidemethod == 'sosi':
+            return
+        return block_list        
 
 
 class Arc(SkyNote):
