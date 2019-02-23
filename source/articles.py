@@ -140,17 +140,16 @@ class SkyNote(Note):
         t = 0
         x0, y0, z0 = self.x1*lane_width*2, self.y1*y_scale, 0
         x1, y1, z1 = self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
-        dx = x1 - x0
+        dx = x1 - x0  # d = delta
         dy = y1 - y0
         dz = int(z1)
         step = 1 / (dx + dy + dx)
-        
+
         if self.slidemethod == 's':
             while t <= 1:
                 block = (x0+t*dx, y0+t*dy, z0+t+dz)
                 block_list.append(block)
                 t += step
-        
         elif self.slidemethod == 'b':
             for i in range(dz+1):
                 l = i / dz
@@ -158,24 +157,26 @@ class SkyNote(Note):
                 y = y0 + dy * -2 * l * l * (l - 1.5)
                 block = (x,y,z)
                 block_list.append(block)
-
-        else:     # Prototype
-            z_list=[]
+        else:  # Prototype
+            x_list = []
+            y_list = []
+            z_list = []
             for i in range(dx):
                 z_list.append(i/dx)
-            sld = self.slidemethod
+            slidemethod = self.slidemethod
+
             try:
-                if sld[3]== 'i':
+                if slidemethod[3] == 'i':  # sisi, sosi
                     for i in z_list:
                         y_list.append(np.sin(i*np.pi/2))
                 else:
                     for i in z_list:
                         y_list.append(-np.cos(i*np.pi/2)+1)
 
-            except: # exception oriented programming
+            except IndexError:  # exception oriented programming
                 y_list = z_list
 
-            if sld[1] == 'i':
+            if slidemethod[1] == 'i':  # sisi, siso
                 for i in z_list:
                         x_list.append(np.sin(i*np.pi/2))
             else:
