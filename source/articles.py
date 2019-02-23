@@ -71,14 +71,16 @@ class Note(Article):
         self.block = (block.AIR, None)
 
     def get_blocks(self, x_scale, y_scale, z_scale):
-        pass  # TODO: Not very sure what to do
+        pass
 
     def __str__(self):
-        return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})".format(
-            name=self.__class__.__name__,
-            start_time=self.t1, end_time=self.t2,
-            start_x=self.x1, end_x=self.x2,
-            start_y=self.y1, end_y=self.y2)
+        return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})".\
+            format(
+                name=self.__class__.__name__,
+                start_time=self.t1, end_time=self.t2,
+                start_x=self.x1, end_x=self.x2,
+                start_y=self.y1, end_y=self.y2
+            )
 
 
 class FloorNote(Note):
@@ -101,8 +103,8 @@ class FloorTap(FloorNote):
         block_list = []
         for i in range(self.visual_length):
             for n in range(lane_width):
-                #                  |---------------x--------------|   y  z            block
-                block_list.append([self.start_lane*(lane_width+1)-n, -1, i].append(self.block))
+                #                  |---------------x--------------|   y  z     block
+                block_list.append([self.start_lane*(lane_width+1)-n, -1, i, self.block])
         return block_list
 
 
@@ -117,8 +119,8 @@ class FloorHold(FloorNote):
         block_list = []
         for i in range(z_scale * (self.end_time - self.start_time)):
             for n in range(lane_width):
-                #                  |---------------x--------------|   y  z            block
-                block_list.append([self.start_lane*(lane_width+1)-n, -1, i].append(self.block))
+                #                  |---------------x--------------|   y  z     block
+                block_list.append([self.start_lane*(lane_width+1)-n, -1, i, self.block])
         return block_list
 
 
@@ -132,11 +134,12 @@ class SkyNote(Note):
         self.y1, self.y2 = (int(float(y1) * 100)), (int(float(y2) * 100))
         self.slidemethod = slidemethod
 
-
-    def get_curve(self, lane_width, y_scale, z_scale): # return coords of the centre of the curve, z_scale is bpm*z_scale
-        block_list=[]        
+    def get_curve(self, lane_width, y_scale, z_scale):
+        # returns coordinates of the centre of the curve, z_scale is bpm*z_scale
+        block_list = []
         t = 0
-        x0, y0, z0, x1, y1, z1 = self.x1*lane_width*2, self.y1*y_scale, 0, self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
+        x0, y0, z0 = self.x1*lane_width*2, self.y1*y_scale, 0
+        x1, y1, z1 = self.x2*lane_width*2, self.y2*y_scale, (self.t2 - self.t1) * z_scale
         dx = x1 - x0
         dy = y1 - y0
         dz = int(z1)
@@ -151,24 +154,23 @@ class SkyNote(Note):
         elif self.slidemethod == 'b':
             for i in range(dz+1):
                 l = i / dz
-                x = x0 + dx * -2 * l * l * (l - 1.5 )
-                y = y0 + dy * -2 * l * l * (l - 1.5 )
+                x = x0 + dx * -2 * l * l * (l - 1.5)
+                y = y0 + dy * -2 * l * l * (l - 1.5)
                 block = (x,y,z)
                 block_list.append(block)
 
-
         elif self.slidemethod == 'si':
-            return
+            pass
         elif self.slidemethod == 'so':
-            return
+            pass
         elif self.slidemethod == 'sisi':
-            return
+            pass
         elif self.slidemethod == 'siso':
-            return
+            pass
         elif self.slidemethod == 'soso':
-            return
+            pass
         elif self.slidemethod == 'sosi':
-            return
+            pass
         return block_list        
 
 
@@ -176,7 +178,7 @@ class Arc(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.color = int(color)
-        self.block = ('magentaGlassBlock', 'lightBlueGlassBlock')
+        self.block = ('magentaGlassBlock', 'lightBlueGlassBlock')  # TODO
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -196,13 +198,14 @@ class SkyLine(SkyNote):
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
-               " slidemethod={slidemethod}. Notes are: {notes}".format(
-            name=self.__class__.__name__,
-            start_time=self.t1, end_time=self.t2,
-            start_x=self.x1, end_x=self.x2,
-            start_y=self.y1, end_y=self.y2,
-            slidemethod=self.slidemethod, notes=self.notes
-        )
+               " slidemethod={slidemethod}. Notes are: {notes}".\
+            format(
+                name=self.__class__.__name__,
+                start_time=self.t1, end_time=self.t2,
+                start_x=self.x1, end_x=self.x2,
+                start_y=self.y1, end_y=self.y2,
+                slidemethod=self.slidemethod, notes=self.notes
+            )
 
 
 class Timing(Article):
@@ -215,9 +218,12 @@ class Timing(Article):
         self.beat = float(beat)
 
     def __str__(self):
-        return "Timing instance at {time}ms with bpm {bpm} and beat {beat}".format(time=self.start_time,
-                                                                                   bpm=self.bpm,
-                                                                                   beat=self.beat)
+        return "Timing instance at {time}ms with bpm {bpm} and beat {beat}".\
+            format(
+                time=self.start_time,
+                bpm=self.bpm,
+                beat=self.beat
+            )
 
 
 class Chart(object):
@@ -273,6 +279,10 @@ class Chart(object):
                 self.all_blocks.append({'x': x, 'y': y, 'z': z, 'block': block, 'data': data})
 
     def __str__(self):
-        return "Offset: {offset}, notes: {notes}".format(offset=self.offset, notes=[str(n) for n in self._notes])
+        return "Offset: {offset}, notes: {notes}".\
+            format(
+                offset=self.offset,
+                notes=[str(n) for n in self._notes]
+            )
 
 
