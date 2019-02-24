@@ -193,6 +193,7 @@ class Arc(SkyNote):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.color = int(color)
         self.block = ('magentaGlassBlock', 'lightBlueGlassBlock')  # TODO
+        self.size = 5
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -203,6 +204,21 @@ class Arc(SkyNote):
             start_y=self.y1, end_y=self.y2,
             slidemethod=self.slidemethod, color=self.color
         )
+
+    def get_blocks(self, lane_width, y_scale, z_scale): # TODO: reduce computation
+        block_list=[]
+        trace = self.get_curve(self, lane_width, y_scale, z_scale)
+        for p in trace:
+            for w in range(self.size):
+                for h in range(self.size - w):
+                    for l in range(self.size - w - h):
+                        block_list.append((
+                            p[0] + w,
+                            p[1] + h,
+                            p[2] + l,
+                            self.block[self.color]
+                            ))
+        return block_list
 
 
 
