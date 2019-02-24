@@ -63,12 +63,14 @@ class Article(object):  # For "Îï¼þ", renamed "article" because of collision wit
 
 
 class Note(Article):
+    _block = ((block.AIR, None), )
+
     def __init__(self):
         super().__init__()
         self.t1, self.t2, \
         self.x1, self.x2, \
         self.y1, self.y2 = (None,) * 6
-        self.block = (block.AIR, None)
+        self.block = self.__class__._block[0]
 
     def get_blocks(self, x_scale, y_scale, z_scale):
         pass
@@ -93,10 +95,11 @@ class FloorNote(Note):
 
 class FloorTap(FloorNote):
     keyword = ""
+    _block = ((block.WOOL, 10), )
 
     def __init__(self, t, lane):
         super().__init__(t, t, lane)
-        self.block = block.STONE
+        self.block = self.__class__._block[0]
         self.visual_length = 2  # visual width in blocks
 
     def get_blocks(self, lane_width, y_scale, z_scale):
@@ -110,16 +113,17 @@ class FloorTap(FloorNote):
 
 class FloorHold(FloorNote):
     keyword = "hold"
+    _block = ((block.WOOL, 10), )
 
     def __init__(self, t1, t2, lane):
         super().__init__(t1, t2, lane)
-        self.block = 'blockForFloorHold'
+        self.block = self.__class__._block[0]
 
     def get_blocks(self, lane_width, y_scale, z_scale):  # pls pass chart.z_scale*bpm as z_scale
         block_list = []
-        for i in range(z_scale * (self.t2 - self.t1)):
+        for i in range(int(z_scale * (self.t2 - self.t1))):
             for n in range(lane_width):
-                #                  |---------------x--------------|   y  z     block
+                #                  |---------------x---- -------|   y  z     block
                 block_list.append([self.x1 * (lane_width + 1) - n, -1, i, self.block])
         return block_list
 
@@ -130,7 +134,7 @@ class SkyNote(Note):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod):
         super().__init__()
         self.t1, self.t2 = int(t1), int(t2)
-        self.x1, self.x2 = (int((float(x1) + 0.5) * 100)), (int((float(x2) + 0.5) * 100))
+        self.x1, self.x2 = (int(float(x1) * 100)), (int(float(x2) * 100))
         self.y1, self.y2 = (int(float(y1) * 100)), (int(float(y2) * 100))
         self.slidemethod = slidemethod
 
@@ -155,7 +159,7 @@ class SkyNote(Note):
                 l = i / dz
                 x = x0 + dx * -2 * l * l * (l - 1.5)
                 y = y0 + dy * -2 * l * l * (l - 1.5)
-                block = (x,y,z)
+                block = (x, y, i)
                 block_list.append(block)
         else:  # Prototype
             x_list = []
@@ -189,25 +193,27 @@ class SkyNote(Note):
     
 
 class Arc(SkyNote):
+    _block = ((block.STAINED_GLASS, 4), (block.STAINED_GLASS, 3))
+
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
-        self.color = int(color)
-        self.block = ('magentaGlassBlock', 'lightBlueGlassBlock')  # TODO
+        self.block = self.__class__._block[int(color)]
         self.size = 5
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
-               " slidemethod={slidemethod} and color={color}".format(
-            name=self.__class__.__name__,
-            start_time=self.t1, end_time=self.t2,
-            start_x=self.x1, end_x=self.x2,
-            start_y=self.y1, end_y=self.y2,
-            slidemethod=self.slidemethod, color=self.color
-        )
+               " slidemethod={slidemethod} and color={color}".\
+            format(
+                name=self.__class__.__name__,
+                start_time=self.t1, end_time=self.t2,
+                start_x=self.x1, end_x=self.x2,
+                start_y=self.y1, end_y=self.y2,
+                slidemethod=self.slidemethod, color=self.color
+            )
 
     def get_blocks(self, lane_width, y_scale, z_scale):  # TODO: reduce computation
         block_list=[]
-        trace = self.get_curve(self, lane_width, y_scale, z_scale)
+        trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
             for w in range(self.size):
                 for h in range(self.size - w):
@@ -216,16 +222,19 @@ class Arc(SkyNote):
                             p[0] + w,
                             p[1] + h,
                             p[2] + l,
-                            self.block[self.color]
+                            self.block
                             ))
         return block_list
 
 
 class SkyLine(SkyNote):
+    _block = (block.STONE, 0)
+
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.notes = notes
         self.visual_size = [8, 4, 4]  # width, height, length
+        self.block = self.__class__._block[0]
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -239,21 +248,23 @@ class SkyLine(SkyNote):
             )
     
     def get_blocks(self, lane_width, y_scale, z_scale):
-        block_list=[]
-        trace = self.get_curve(self, lane_width, y_scale, z_scale)
+        block_list = []
+        trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
-            block_list.append((p[1], p[2], p[3], (95, 15)))  # TODO: add self.block for trace & skytaps
+            block_list.append((p[1], p[2], p[3], (95, 15), self.block))  # TODO: add self.block for trace & skytaps
 
         for note in self.notes:
-            z = int(note / (t2-t1))
+            z = int(
+                z_scale*(self.t2-self.t1) * ((note-self.t1) / (self.t2-self.t1))
+            )
             centre = trace[z]
             for w in range(self.visual_size[0]):
                 for h in range(self.visual_size[1]):
                     for l in range(self.visual_size[2]):
                         block_list.append((
-                            centre[0]+w-self.visuanl_size[0]/2,
-                            centre[1]+h-self.visuanl_size[1]/2,
-                            centre[2]+l-self.visuanl_size[2]/2,
+                            centre[0]+w-self.visual_size[0]/2,
+                            centre[1]+h-self.visual_size[1]/2,
+                            centre[2]+l-self.visual_size[2]/2,
                             (95,0)
                             ))
         return block_list
@@ -312,22 +323,22 @@ class Chart(object):
         bpm = 0
         for i in range(len(self._timings)):
             current_timing = self._timings[-i-1]  # Going through self._timings backward
-            if current_timing.start_time < t:  # If this timing is before the note (t)
-                z += current_timing.bpm * (t - current_timing.start_time)  # Distance between the note and the timing
+            if current_timing.t1 < t:  # If this timing is before the note (t)
+                z += current_timing.bpm * (t - current_timing.t1)  # Distance between the note and the timing
                 bpm = current_timing.bpm
                 for n in range(len(self._timings)-i-1):  # For every timing before this one
-                    z += self._timings[n].bpm * (self._timings[n+1].start_time - self._timings[n].start_time)
+                    z += self._timings[n].bpm * (self._timings[n+1].t1 - self._timings[n].t1)
                     # Add the complete distance before the note
                 break
         z *= self.z_scale  # Calculate the distance in blocks
         return z, bpm
 
-    def build(self):
+    def build(self, lane_width, y_scale, z_scale):
         # Prototype
         for note in self._notes:
-            for block in note.get_blocks():
+            for block in note.get_blocks(lane_width, y_scale, z_scale):
                 x, y, z, (block, data) = block
-                self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1) , 'block': block, 'data': data})
+                self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1)[0], 'block': block, 'data': data})
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".\
