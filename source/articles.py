@@ -228,7 +228,7 @@ class Arc(SkyNote):
 
 
 class SkyLine(SkyNote):
-    _block = (block.STONE, 0)
+    _block = ((block.STONE, 0), )
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -251,7 +251,7 @@ class SkyLine(SkyNote):
         block_list = []
         trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
-            block_list.append((p[1], p[2], p[3], (95, 15), self.block))  # TODO: add self.block for trace & skytaps
+            block_list.append((p[0], p[1], p[2], self.block))  # TODO: add self.block for trace & skytaps
 
         for note in self.notes:
             z = int(
