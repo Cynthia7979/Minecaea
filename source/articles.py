@@ -329,7 +329,7 @@ class Chart(object):
         for note in self._notes:
             for block in note.get_blocks():
                 x, y, z, (block, data) = block
-                self.all_blocks.append({'x': x, 'y': y, 'z': z, 'block': block, 'data': data})
+                self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1) , 'block': block, 'data': data})
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".\
