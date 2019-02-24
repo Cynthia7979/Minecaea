@@ -232,7 +232,7 @@ class SkyLine(SkyNote):
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
-        self.notes = notes
+        self.notes = [int(note) for note in notes]
         self.visual_size = [8, 4, 4]  # width, height, length
         self.block = self.__class__._block[0]
 
@@ -265,7 +265,7 @@ class SkyLine(SkyNote):
                             centre[0]+w-self.visual_size[0]/2,
                             centre[1]+h-self.visual_size[1]/2,
                             centre[2]+l-self.visual_size[2]/2,
-                            (95,0)
+                            self.block
                             ))
         return block_list
 
