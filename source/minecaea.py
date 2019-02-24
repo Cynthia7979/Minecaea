@@ -13,3 +13,8 @@ notes = chart.get_notes()
 mc = minecraft.Minecraft.create()
 pos = mc.player.getTilePos()
 x0, y0, z0 = pos.x, pos.y, pos.z
+
+
+def main():
+    music_chart = file_load.load("test.aff")
+    music_chart.build()

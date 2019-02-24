@@ -205,13 +205,13 @@ class Arc(SkyNote):
             slidemethod=self.slidemethod, color=self.color
         )
 
-    def get_blocks(self, lane_width, y_scale, z_scale): # TODO: reduce computation
+    def get_blocks(self, lane_width, y_scale, z_scale):  # TODO: reduce computation
         block_list=[]
         trace = self.get_curve(self, lane_width, y_scale, z_scale)
         for p in trace:
             for w in range(self.size):
                 for h in range(self.size - w):
-                    for l in range(self.size - w - h):
+                    for l in range(self.size - w - h):      # 66666666
                         block_list.append((
                             p[0] + w,
                             p[1] + h,
@@ -221,13 +221,11 @@ class Arc(SkyNote):
         return block_list
 
 
-
-
 class SkyLine(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.notes = notes
-        self.visual_size = [8,4,4] #width,height,length
+        self.visual_size = [8, 4, 4]  # width, height, length
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -244,7 +242,7 @@ class SkyLine(SkyNote):
         block_list=[]
         trace = self.get_curve(self, lane_width, y_scale, z_scale)
         for p in trace:
-            block_list.append((p[1],p[2],p[3],(95,15))) #TODO: add self.block for trace & skytaps
+            block_list.append((p[1], p[2], p[3], (95, 15)))  # TODO: add self.block for trace & skytaps
 
         for note in self.notes:
             z = int(note / (t2-t1))

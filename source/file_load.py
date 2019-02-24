@@ -54,5 +54,6 @@ def load(filepath):
         chart.add_note(create_article(line))
     return chart
 
+
 if __name__ == '__main__':
     load("test.aff")
