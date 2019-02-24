@@ -185,8 +185,8 @@ class SkyNote(Note):
 
             for i in range(dx):
                 block_list.append((x0+dx*x_list[i],y0+dy*y_list[i],i))
-        return block_list        
-
+        return block_list
+    
 
 class Arc(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
@@ -205,10 +205,13 @@ class Arc(SkyNote):
         )
 
 
+
+
 class SkyLine(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.notes = notes
+        self.visual_size = [8,4,4] #width,height,length
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -220,6 +223,26 @@ class SkyLine(SkyNote):
                 start_y=self.y1, end_y=self.y2,
                 slidemethod=self.slidemethod, notes=self.notes
             )
+    
+    def get_blocks(self, lane_width, y_scale, z_scale):
+        block_list=[]
+        trace = self.get_curve(self, lane_width, y_scale, z_scale)
+        for p in trace:
+            block_list.append((p[1],p[2],p[3],(95,15))) #TODO: add self.block for trace & skytaps
+
+        for note in self.notes:
+            z = int(note / (t2-t1))
+            centre = trace[z]
+            for w in range(self.visuanl_size[0]):
+                for h in range(self.visual_size[1]):
+                    for l in range(self.visual_size[2]):
+                        block_list.append((
+                            centre[0]+w-self.visuanl_size[0]/2,
+                            centre[1]+h-self.visuanl_size[1]/2,
+                            centre[2]+l-self.visuanl_size[2]/2,
+                            (95,0)
+                            ))
+        return block_list
 
 
 class Timing(Article):
