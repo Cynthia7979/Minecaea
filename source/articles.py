@@ -48,15 +48,15 @@ class Article(object):  # For "Îï¼þ", renamed "article" because of collision wit
 
     def __gt__(self, other):
         self.check_class(other)
-        return self.t1 > other.start_time
+        return self.t1 > other.t1
 
     def __ge__(self, other):
         self.check_class(other)
-        return self.t1 >= other.start_time
+        return self.t1 >= other.t1
 
     def __eq__(self, other):
         self.check_class(other)
-        return self.t1 == other.start_time
+        return self.t1 == other.t1
 
     def __str__(self):
         return "Article instance at {time}ms.".format(time=self.t1)
@@ -86,9 +86,9 @@ class Note(Article):
 class FloorNote(Note):
     def __init__(self, t1, t2, lane):
         super().__init__()
-        self.start_lane, self.end_lane = (int(lane), int(lane))
-        self.start_height, self.end_height = (0, 0)
-        self.start_time, self.end_time = int(t1), int(t2)
+        self.x1, self.x2 = (int(lane), int(lane))
+        self.y1, self.y2 = (0, 0)
+        self.t1, self.t2 = int(t1), int(t2)
 
 
 class FloorTap(FloorNote):
@@ -104,7 +104,7 @@ class FloorTap(FloorNote):
         for i in range(self.visual_length):
             for n in range(lane_width):
                 #                  |---------------x--------------|   y  z     block
-                block_list.append([self.start_lane*(lane_width+1)-n, -1, i, self.block])
+                block_list.append([self.x1 * (lane_width + 1) - n, -1, i, self.block])
         return block_list
 
 
@@ -117,10 +117,10 @@ class FloorHold(FloorNote):
 
     def get_blocks(self, lane_width, y_scale, z_scale):  # pls pass chart.z_scale*bpm as z_scale
         block_list = []
-        for i in range(z_scale * (self.end_time - self.start_time)):
+        for i in range(z_scale * (self.t2 - self.t1)):
             for n in range(lane_width):
                 #                  |---------------x--------------|   y  z     block
-                block_list.append([self.start_lane*(lane_width+1)-n, -1, i, self.block])
+                block_list.append([self.x1 * (lane_width + 1) - n, -1, i, self.block])
         return block_list
 
 
@@ -247,7 +247,7 @@ class SkyLine(SkyNote):
         for note in self.notes:
             z = int(note / (t2-t1))
             centre = trace[z]
-            for w in range(self.visuanl_size[0]):
+            for w in range(self.visual_size[0]):
                 for h in range(self.visual_size[1]):
                     for l in range(self.visual_size[2]):
                         block_list.append((
@@ -264,14 +264,14 @@ class Timing(Article):
 
     def __init__(self, time, bpm, beat):
         super().__init__()
-        self.start_time = int(time)
+        self.t1 = int(time)
         self.bpm = float(bpm)
         self.beat = float(beat)
 
     def __str__(self):
         return "Timing instance at {time}ms with bpm {bpm} and beat {beat}".\
             format(
-                time=self.start_time,
+                time=self.t1,
                 bpm=self.bpm,
                 beat=self.beat
             )
