@@ -37,7 +37,7 @@ x y t AND x y z coordinates: Arcaea and Minecraft coordinates
 """
 
 
-class Article(object):  # For "Îï¼þ", renamed "article" because of collision with "object"
+class Article(object):  # For "ÃŽÃ¯Â¼Ã¾", renamed "article" because of collision with "object"
     keyword = None
 
     def __init__(self):
@@ -336,7 +336,7 @@ class Chart(object):
     def build(self, lane_width, y_scale, z_scale):
         # Prototype
         for note in self._notes:
-            for block in note.get_blocks(lane_width, y_scale, z_scale):
+            for block in note.get_blocks(lane_width, y_scale, z_scale): #zscale*bpm
                 x, y, z, (block, data) = block
                 self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1)[0], 'block': block, 'data': data})
 
