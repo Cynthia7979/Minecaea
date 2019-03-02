@@ -336,7 +336,7 @@ class Chart(object):
     def build(self, lane_width, y_scale, z_scale):
         # Prototype
         for note in self._notes:
-            for block in note.get_blocks(lane_width, y_scale, z_scale):
+            for block in note.get_blocks(lane_width, y_scale, z_scale * self.t2z(note.t1)[1]):
                 x, y, z, (block, data) = block
                 self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1)[0], 'block': block, 'data': data})
 

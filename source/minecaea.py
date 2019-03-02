@@ -8,7 +8,7 @@ lane_width = 24
 whr = 2 # width-height ratio
 debug_output = True
 y_scale = lane_width * 4 / whr
-z_scale = 10**(-7)
+z_scale = 10**(-8)
 
 def main():
     global debug_output
