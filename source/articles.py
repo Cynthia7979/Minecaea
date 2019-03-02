@@ -200,7 +200,7 @@ class Arc(SkyNote):
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.block = self.__class__._block[int(color)]
-        self.size = 5
+        self.size = 3
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -259,7 +259,12 @@ class SkyLine(SkyNote):
             z = int(
                 z_scale*(self.t2-self.t1) * ((note-self.t1) / (self.t2-self.t1))
             )
-            centre = trace[z]
+            try:
+                centre = trace[z]
+            except IndexError:
+                print((z,len(trace)))
+                print('centre location error at '+str(note))
+                centre = trace[-1]
             for w in range(self.visual_size[0]):
                 for h in range(self.visual_size[1]):
                     for l in range(self.visual_size[2]):
@@ -332,7 +337,7 @@ class Chart(object):
                     z += self._timings[n].bpm * (self._timings[n+1].t1 - self._timings[n].t1)
                     # Add the complete distance before the note
                 break
-        z *= self.z_scale  # Calculate the distance in blocks
+        #z *= z_scale  # Calculate the distance in blocks
         return z, bpm
 
     def build(self, lane_width, y_scale, z_scale):
@@ -340,7 +345,7 @@ class Chart(object):
         for note in self._notes:
             for block in note.get_blocks(lane_width, y_scale, z_scale * self.t2z(note.t1)[1]):
                 x, y, z, (block, data) = block
-                self.all_blocks.append({'x': x, 'y': y, 'z': z + self.t2z(note.t1)[0], 'block': block, 'data': data})
+                self.all_blocks.append({'x': x, 'y': y, 'z': z + z_scale * self.t2z(note.t1)[0], 'block': block, 'data': data})
 
     def __str__(self):
         return "Offset: {offset}, notes: {notes}".\

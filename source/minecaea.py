@@ -17,7 +17,7 @@ def main():
     pos = mc.player.getTilePos()
     x0, y0, z0 = pos.x, pos.y, pos.z
     mc.setBlock(x0, y0, z0, blocks.WOOL.id, 3)
-    music_chart = file_load.load("2.aff")
+    music_chart = file_load.load("0.aff")
     music_chart.build(lane_width, y_scale, z_scale)
     print(music_chart)
     for block in music_chart.all_blocks:
