@@ -26,7 +26,7 @@ color: int
     0 = blue
     1 = red
 
-notes: tuple of int, represeting time in ms
+notes: tuple of int, representing time in ms
 
 block: tuple (block, data)
     block: block instance from mcpi.block
@@ -95,7 +95,7 @@ class FloorNote(Note):
 
 class FloorTap(FloorNote):
     keyword = ""
-    _block = ((block.WOOL, 10), )
+    _block = ((block.WOOL, 9), )
 
     def __init__(self, t, lane):
         super().__init__(t, t, lane)
@@ -113,7 +113,7 @@ class FloorTap(FloorNote):
 
 class FloorHold(FloorNote):
     keyword = "hold"
-    _block = ((block.WOOL, 10), )
+    _block = ((block.WOOL, 9), )
 
     def __init__(self, t1, t2, lane):
         super().__init__(t1, t2, lane)
@@ -195,7 +195,7 @@ class SkyNote(Note):
     
 
 class Arc(SkyNote):
-    _block = ((block.STAINED_GLASS, 4), (block.STAINED_GLASS, 3))
+    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 2))
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -230,7 +230,7 @@ class Arc(SkyNote):
 
 
 class SkyLine(SkyNote):
-    _block = ((block.STAINED_GLASS, 15), )
+    _block = ((block.STAINED_GLASS, 14), )
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -337,7 +337,7 @@ class Chart(object):
                     z += self._timings[n].bpm * (self._timings[n+1].t1 - self._timings[n].t1)
                     # Add the complete distance before the note
                 break
-        #z *= z_scale  # Calculate the distance in blocks
+        #  z *= z_scale  # Calculate the distance in blocks
         return z, bpm
 
     def build(self, lane_width, y_scale, z_scale):
