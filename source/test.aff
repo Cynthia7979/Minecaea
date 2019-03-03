@@ -1,0 +1,7 @@
+AudioOffset:3
+-
+timing(0,60.00,4.00)
+arc(0,2000,-0.50,0.00,si,0.00,1.00,0,none,true)[arctap(2000)];
+arc(2000,4000,0.50,1.00,s0,0.00,1.00,0,none,true)[arctap(4000)];
+arc(4000,6000,-0.50,0.00,sosi,0.00,1.00,0,none,true)[arctap(6000)];
+arc(6000,8000,0.50,1.00,siso,0.00,1.00,0,none,true)[arctap(8000)];

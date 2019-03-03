@@ -1,6 +1,6 @@
 # -*- coding: gb2312 -*-
 
-import mcpi.block as block
+import Minecaea.source.mcpi.block as block
 import numpy as np
 
 """
@@ -63,7 +63,7 @@ class Article(object):  # For "物件", renamed "article" because of collision wit
 
 
 class Note(Article):
-    _block = ((block.AIR, None), )
+    _block = ((block.AIR, 0), )
 
     def __init__(self):
         super().__init__()
@@ -113,7 +113,7 @@ class FloorTap(FloorNote):
 
 class FloorHold(FloorNote):
     keyword = "hold"
-    _block = ((block.WOOL, 9), )
+    _block = ((block.WOOL, 3), )
 
     def __init__(self, t1, t2, lane):
         super().__init__(t1, t2, lane)
@@ -124,7 +124,7 @@ class FloorHold(FloorNote):
         for i in range(int(z_scale * (self.t2 - self.t1))):
             for n in range(lane_width):
                 #                  |---------------x---- -------|   y  z     block
-                block_list.append([(self.x1-1) * (lane_width +1) - n, -1, i, self.block])
+                block_list.append([(self.x1-1) * (lane_width + 1) - n, -1, i, self.block])
         return block_list
 
 
@@ -147,20 +147,20 @@ class SkyNote(Note):
         dx = x1 - x0  # d = delta
         dy = y1 - y0
         dz = int(z1)
-        step = 1 / (abs(dx) + abs(dy) + dz +1)
+        step = 1 / (abs(dx) + abs(dy) + dz + 1)
 
         if self.slidemethod == 's':
             while t <= 1:
-                block = (x0+t*dx, y0+t*dy, z0+t*dz)
-                block_list.append(block)
+                block_ = (x0+t*dx, y0+t*dy, z0+t*dz)
+                block_list.append(block_)
                 t += step
         elif self.slidemethod == 'b':
             for i in range(dz+1):
                 l = i / dz
                 x = x0 + dx * -2 * l * l * (l - 1.5)
                 y = y0 + dy * -2 * l * l * (l - 1.5)
-                block = (x, y, i)
-                block_list.append(block)
+                block_ = (x, y, i)
+                block_list.append(block_)
         else:  # Prototype
             x_list = []
             y_list = []
@@ -188,12 +188,12 @@ class SkyNote(Note):
                         x_list.append(-np.cos(i*np.pi/2)+1)
 
             for i in range(dz):
-                block_list.append((x0+dx*x_list[i],y0+dy*y_list[i],i))
+                block_list.append((x0+dx*x_list[i], y0+dy*y_list[i], i))
         return block_list
     
 
 class Arc(SkyNote):
-    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 14))
+    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 2))
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -212,7 +212,7 @@ class Arc(SkyNote):
             )
 
     def get_blocks(self, lane_width, y_scale, z_scale):  # TODO: reduce computation
-        block_list=[]
+        block_list = []
         trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
             for w in range(-self.size,self.size):
@@ -228,13 +228,14 @@ class Arc(SkyNote):
 
 
 class SkyLine(SkyNote):
-    _block = ((block.STAINED_GLASS, 2), )
+    _block = ((block.STAINED_GLASS, 7), (block.IRON_BLOCK, 0))
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
         self.notes = [int(note) for note in notes]
         self.visual_size = [8, 2, 2]  # width, height, length
-        self.block = self.__class__._block[0]
+        self.line_block = self.__class__._block[0]
+        self.note_block = self.__class__._block[1]
 
     def __str__(self):
         return "{name} instance at {start_time}~{end_time}ms with pos x ({start_x}~{end_x}), y({start_y}~{end_y})," \
@@ -251,17 +252,18 @@ class SkyLine(SkyNote):
         block_list = []
         trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
-            block_list.append((p[0], p[1], p[2], self.block))  # TODO: add self.block for trace & skytaps
+            block_list.append((p[0], p[1], p[2], self.line_block))
         for note in self.notes:
-            z = int(
-                z_scale*(self.t2-self.t1) * ((note-self.t1) / (self.t2-self.t1))
-            )
+            block_to_use = self.note_block
+            z = z_scale*(self.t2-self.t1) * ((note-self.t1) / (self.t2-self.t1))
+            int_z = int(z)
             try:
-                centre = trace[z]
+                centre = trace[int_z]
             except IndexError:
-                print((z,len(trace)))
-                print('centre location error at '+str(note))
+                print((z, len(trace)))
+                #print('centre location error at '+str(note))
                 centre = trace[-1]
+                #block_to_use = (block.WOOL, 14)  # Mark the note as red
             for w in range(self.visual_size[0]):
                 for h in range(self.visual_size[1]):
                     for l in range(self.visual_size[2]):
@@ -269,7 +271,7 @@ class SkyLine(SkyNote):
                             centre[0]+w-self.visual_size[0]/2,
                             centre[1]+h-self.visual_size[1]/2,
                             centre[2]+l-self.visual_size[2]/2,
-                            self.block
+                            block_to_use
                             ))
         return block_list
 

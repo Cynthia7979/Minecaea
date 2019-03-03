@@ -1,4 +1,4 @@
-import articles
+from Minecaea.source import articles
 
 
 def create_article(string):
@@ -19,7 +19,6 @@ def create_article(string):
             all_notes = cut_string(cut_string(string, "[", after=True), "]", before=True)
             notes = []
             if all_notes != '':
-                
                 for note in all_notes.split(','):
                     notes.append(cut_string(cut_string(note, "(", after=True), ")", before=True))
             return articles.SkyLine(t1, t2, x1, x2, y1, y2, slidemethod, notes)
