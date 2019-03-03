@@ -100,14 +100,14 @@ class FloorTap(FloorNote):
     def __init__(self, t, lane):
         super().__init__(t, t, lane)
         self.block = self.__class__._block[0]
-        self.visual_length = 2  # visual width in blocks
+        self.visual_length = 4  # visual width in blocks
 
     def get_blocks(self, lane_width, y_scale, z_scale):
         block_list = []
         for i in range(self.visual_length):
             for n in range(lane_width):
                 #                  |---------------x--------------|   y  z     block
-                block_list.append([self.x1 * (lane_width + 1) - n, -1, i, self.block])
+                block_list.append([(self.x1-1) * (lane_width +1) - n, -1, i, self.block])
         return block_list
 
 
@@ -121,11 +121,10 @@ class FloorHold(FloorNote):
 
     def get_blocks(self, lane_width, y_scale, z_scale):  # pls pass chart.z_scale*bpm as z_scale
         block_list = []
-        print((z_scale * (self.t2 - self.t1)))
         for i in range(int(z_scale * (self.t2 - self.t1))):
             for n in range(lane_width):
                 #                  |---------------x---- -------|   y  z     block
-                block_list.append([self.x1 * (lane_width + 1) - n, -1, i, self.block])
+                block_list.append([(self.x1-1) * (lane_width +1) - n, -1, i, self.block])
         return block_list
 
 
@@ -155,7 +154,6 @@ class SkyNote(Note):
                 block = (x0+t*dx, y0+t*dy, z0+t*dz)
                 block_list.append(block)
                 t += step
-                print(t)
         elif self.slidemethod == 'b':
             for i in range(dz+1):
                 l = i / dz
@@ -195,7 +193,7 @@ class SkyNote(Note):
     
 
 class Arc(SkyNote):
-    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 2))
+    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 14))
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -217,9 +215,9 @@ class Arc(SkyNote):
         block_list=[]
         trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
-            for w in range(self.size):
-                for h in range(self.size - w):
-                    for l in range(self.size - w - h):      # 66666666
+            for w in range(-self.size,self.size):
+                for h in range(self.size - abs(w)):
+                    for l in range(self.size - abs(w) - h):      # 66666666
                         block_list.append((
                             p[0] + w,
                             p[1] + h,
@@ -230,7 +228,7 @@ class Arc(SkyNote):
 
 
 class SkyLine(SkyNote):
-    _block = ((block.STAINED_GLASS, 14), )
+    _block = ((block.STAINED_GLASS, 2), )
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
@@ -254,7 +252,6 @@ class SkyLine(SkyNote):
         trace = self.get_curve(lane_width, y_scale, z_scale)
         for p in trace:
             block_list.append((p[0], p[1], p[2], self.block))  # TODO: add self.block for trace & skytaps
-            print(p)
         for note in self.notes:
             z = int(
                 z_scale*(self.t2-self.t1) * ((note-self.t1) / (self.t2-self.t1))
