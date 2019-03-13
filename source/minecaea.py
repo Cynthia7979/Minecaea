@@ -18,6 +18,7 @@ def main():
     mc = minecraft.Minecraft.create()
     pos = mc.player.getTilePos()
     x0, y0, z0 = pos.x, pos.y, pos.z
+    rotation = [[1,0],[0,1]] #currently has no function, unless being assigned according to the player's rotation
     for i in range(0, 3050, 10):  # Clear space
         mc.setBlocks(x0 - LANE_WIDTH, y0, z0 + i, x0 + 4 + (LANE_WIDTH * 3), y0 + 100, z0 + i + 9, blocks.AIR)
         sleep(0.01)  # Prevent server crash
@@ -29,6 +30,7 @@ def main():
     music_chart.build(LANE_WIDTH, Y_SCALE, Z_SCALE)
     for block in music_chart.all_blocks:
         x, y, z, block_to_set, data = block.values()
+        x, z = x*rotation[0][0]+z*rotation[0][1], x*rotation[1][0]+z*rotation[1][1] # linear algrebra saves me!
         try:
             mc.setBlock(x+x0, y+y0, z+z0, block_to_set.id, data)
         except Exception as e:
