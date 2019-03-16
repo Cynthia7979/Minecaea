@@ -1,6 +1,6 @@
 # -*- coding: gb2312 -*-
 
-import Minecaea.source.mcpi.block as block
+import mcpi.block as block
 import numpy as np
 
 """
@@ -221,7 +221,7 @@ class Arc(SkyNote):
                         block_list.append((
                             p[0] + w,
                             p[1] + h,
-                            p[2] + l,
+                            p[2] _ l,
                             self.block
                             ))
         return block_list

@@ -1,4 +1,4 @@
-from Minecaea.source import articles
+import articles
 
 
 def create_article(string):
