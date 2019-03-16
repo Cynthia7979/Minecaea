@@ -1,6 +1,6 @@
-from Minecaea.source import file_load
-import Minecaea.source.mcpi.minecraft as minecraft
-import Minecaea.source.mcpi.block as blocks
+import file_load
+import mcpi.minecraft as minecraft
+import mcpi.block as blocks
 from time import sleep
 
 # almost constant variables
@@ -18,15 +18,20 @@ def main():
     mc = minecraft.Minecraft.create()
     pos = mc.player.getTilePos()
     x0, y0, z0 = pos.x, pos.y, pos.z
-    rotation = [[1,0],[0,1]] #currently has no function, unless being assigned according to the player's rotation
-    
+    rot = mc.player.getRotation()
+    if rot <45 or rot >315:
+        rotation = [[-1,0],[0,1]]
+    elif rot<135:
+        rotation = [[0,1],[-1,0]]
+    elif rot<225:
+        rotation = [[1,0],[0,-1]]
+    else:
+        rotation = [[0,-1],[1,0]]
+
     music_chart = file_load.load(FILE)
     music_chart.build(LANE_WIDTH, Y_SCALE, Z_SCALE)
     # get last block
-    try:
-        last = music_chart.all_blocks[-1].t2
-    except:
-        last = music_chart.all_blocks[-1].t1
+    last = music_chart.all_blocks[-1]['z]
     last_block = music_chart.t2z(last)
     
     for i in range(0, 3050, 10):  # Clear space
