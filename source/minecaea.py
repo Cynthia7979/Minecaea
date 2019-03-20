@@ -38,9 +38,10 @@ def main():
         mc.setBlocks(x0 - LANE_WIDTH, y0, z0 + i, x0 + 4 + (LANE_WIDTH * 3), y0 + 100, z0 + i + 9, blocks.AIR)
         sleep(0.01)  # Prevent server crash
     mc.setBlock(x0, y0, z0, blocks.WOOL.id, 14)  # Test, also original coordinate
-    fl_x0,fl_z0,fl_x1,fl_z1=x0 - LANE_WIDTH,z0,x0 + 4 + (LANE_WIDTH * 3),z0 + 3050
+    fl_x0,fl_z0,fl_x1,fl_z1=x0 - LANE_WIDTH,z0,x0 + 4 + (LANE_WIDTH * 3),z0 + last_block
     floor_coords=[[fl_x0,fl_z0],[fl_x1,fl_z1]]
     # TODO: add matrix multiplication here
+    #fl_x0, fl_z0 = x*rotation[0][0]+z*rotation[0][1], x*rotation[1][0]+z*rotation[1][1]
     mc.setBlocks(x0 - LANE_WIDTH, y0 - 1, z0, x0 + 4 + (LANE_WIDTH * 3), y0 - 1, z0 + 3050, blocks.IRON_BLOCK)
     # TODO: multiply the rotation matrix to the floor
     for i in range(3):
