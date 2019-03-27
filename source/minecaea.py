@@ -1,6 +1,7 @@
 import file_load
 import mcpi.minecraft as minecraft
 import mcpi.block as blocks
+import numpy as np
 from time import sleep
 
 # almost constant variables
@@ -10,6 +11,13 @@ DEBUG_OUTPUT = False
 Y_SCALE = LANE_WIDTH * 5 / WHR
 Z_SCALE = 5e-4
 FILE = "2.aff"
+CONTINUOUS_ROTATION = False
+
+def mat_product(mat, vec): # for 2*2 mat and 2*n vec
+    for v in vec:
+        x, z = v[0]*mat[0][0]+v[1]*mat[0][1], v[0]*mat[1][0]+v[1]*mat[1][1]
+        v = [x,z]
+    return vec
 
 
 def main():
@@ -27,6 +35,10 @@ def main():
         rotation = [[1,0],[0,-1]]
     else:
         rotation = [[0,-1],[1,0]]
+        
+    theta = rot/360 * 2*np.pi
+    if CONTINUOUS_ROTATION == True:
+        rotation = [[-np.cos(theta),np.sin(theta)],[np.cos(theta),-np.sin(theta)]] # Not sure if that's correct
 
     music_chart = file_load.load(FILE)
     music_chart.build(LANE_WIDTH, Y_SCALE, Z_SCALE)
@@ -40,10 +52,15 @@ def main():
     mc.setBlock(x0, y0, z0, blocks.WOOL.id, 14)  # Test, also original coordinate
     fl_x0,fl_z0,fl_x1,fl_z1=x0 - LANE_WIDTH,z0,x0 + 4 + (LANE_WIDTH * 3),z0 + last_block
     floor_coords=[[fl_x0,fl_z0],[fl_x1,fl_z1]]
-    # TODO: add matrix multiplication here
-    #fl_x0, fl_z0 = x*rotation[0][0]+z*rotation[0][1], x*rotation[1][0]+z*rotation[1][1]
-    mc.setBlocks(x0 - LANE_WIDTH, y0 - 1, z0, x0 + 4 + (LANE_WIDTH * 3), y0 - 1, z0 + 3050, blocks.IRON_BLOCK)
-    # TODO: multiply the rotation matrix to the floor
+    floor_coords=mat_product(rotation,floor_coords)
+    mc.setBlocks(floor_coords[0][0], y0 - 1, floor_coords[0][1], floor_coords[1][0], y0 - 1, floor_coords[1][1], blocks.IRON_BLOCK)
+    '''
+    lane_border = []
+    for i in range(3):
+        lane_border=[[x0 + i * LANE_WIDTH + i + 1, z0],[x0 + i * LANE_WIDTH + i + 1, z0 + last_block]]
+        lane_border=mat_product(rotation,lane_border)
+    '''
+    # TODO: mat product for lane borders
     for i in range(3):
         mc.setBlocks(x0 + i * LANE_WIDTH + i + 1, y0 - 1, z0, x0 + i * LANE_WIDTH + i + 1, y0 - 1, z0 + last_block, blocks.WOOL, 1)
     for block in music_chart.all_blocks:
