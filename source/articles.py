@@ -221,7 +221,7 @@ class Arc(SkyNote):
                         block_list.append((
                             p[0] + w,
                             p[1] + h,
-                            p[2] _ l,
+                            p[2] - l,
                             self.block
                             ))
         return block_list
