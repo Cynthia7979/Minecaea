@@ -47,7 +47,7 @@ def main():
     # get last block
     last = music_chart.all_blocks[-1]['z']
     #last_block =  music_chart.t2z(last)[0]
-    
+    # TODO: move this part( the floor) to article.chart.build()
     '''
     for i in range(0, 3050, 10):  # Clear space
         mc.setBlocks(x0 - LANE_WIDTH, y0, z0 + i, x0 + 4 + (LANE_WIDTH * 3), y0 + 100, z0 + i + 9, blocks.AIR)
