@@ -17,7 +17,6 @@ The code is based on [RaspberryJuice](https://dev.bukkit.org/projects/raspberryj
 ([mcpi](https://minecraft.gamepedia.com/Pi_Edition)) and Python 3.6
 
 ## 项目 Repository
-本repo会主要在1月10日到1月17日之间活跃。如果项目没有完成，那就没有完成吧（bushi
 
 Minecaea的Minecraft地图在[这里](https://github.com/EnderKerman/Minecraft-Worlds/tree/master/Worlds/1.13_Minecaea)，地图版本为1.13。
 
@@ -27,7 +26,6 @@ Minecaea的Minecraft地图在[这里](https://github.com/EnderKerman/Minecraft-W
 
 具体请参考Prototypes文件夹。
 
-This repo will mainly be active between Jan. 10th and Jan. 17th. It will just be left what it is if we didn't finish all of it.
 
 The Minecraft map of Minecaea is [here](https://github.com/EnderKerman/Minecraft-Worlds/tree/master/Worlds/1.13_Minecaea). Map version 1.13.
 
