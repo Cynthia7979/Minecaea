@@ -1,7 +1,8 @@
 import articles
+import datetime
 
 
-def create_article(string):
+def create_article(string, is_april_fools):
     if string in ("", " ", "\n") or string.startswith("#"):
         return None
     keyword = cut_string(string, "(", before=True)
@@ -23,7 +24,7 @@ def create_article(string):
                     notes.append(cut_string(cut_string(note, "(", after=True), ")", before=True))
             return articles.SkyLine(t1, t2, x1, x2, y1, y2, slidemethod, notes)
         else:
-            return articles.Arc(t1, t2, x1, x2, y1, y2, slidemethod, color)
+            return articles.Arc(t1, t2, x1, x2, y1, y2, slidemethod, color, is_april_fools)
     elif keyword == articles.Timing.keyword:
         time, bpm, beat = attributes
         return articles.Timing(time, bpm, beat)
@@ -42,6 +43,11 @@ def cut_string(string, cut_at, after=False, before=False):
 
 
 def load(filepath):
+    today = datetime.datetime.today()
+    if today.month == 4 and today.day == 1:
+        is_april_fools = True
+    else:
+        is_april_fools = False
     f = open(filepath)
     raw = f.read()
     lines = raw.split("\n")
@@ -52,7 +58,7 @@ def load(filepath):
     lines.pop(0)  # "-" -- the separator
 
     for line in lines:
-        chart.add_note(create_article(line))
+        chart.add_note(create_article(line), is_april_fools)
     return chart
 
 

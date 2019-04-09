@@ -193,11 +193,15 @@ class SkyNote(Note):
     
 
 class Arc(SkyNote):
-    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 2))
+    #               Magenta                   Light Blue                Light Green
+    _block = ((block.STAINED_GLASS, 3), (block.STAINED_GLASS, 2), (block.STAINED_GLASS, 5))
 
-    def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color):
+    def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, color, is_april_fools):
         super().__init__(t1, t2, x1, x2, y1, y2, slidemethod)
-        self.block = self.__class__._block[int(color)]
+        if is_april_fools:
+            self.block = self.__class__._block[2]
+        else:
+            self.block = self.__class__._block[int(color)]
         self.size = 3
 
     def __str__(self):
@@ -228,6 +232,7 @@ class Arc(SkyNote):
 
 
 class SkyLine(SkyNote):
+    #                   Gray
     _block = ((block.STAINED_GLASS, 7), (block.IRON_BLOCK, 0))
 
     def __init__(self, t1, t2, x1, x2, y1, y2, slidemethod, notes):
